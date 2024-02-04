@@ -11,11 +11,9 @@ public class Controller {
     @Autowired
     RTDIS rtdis;
 
-    @GetMapping("/check")
-    public String check(){
-        //rtdis.sendMessage();
-        rtdis.startStreaming();
-        return "Okay";
+    @GetMapping()
+    public String message(){
+        return "No API URL provided. Please provide an API URL as a command line argument.";
 
     }
 }
