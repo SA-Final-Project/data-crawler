@@ -52,16 +52,16 @@ public class StandardDeviationServiceIml implements StandardDeviationService {
     }
 
     private Double calculateStandardDeviation() {
-        Integer average;
+        double average;
         double sum = 0;
         for (Long x : InMemoryStorage.VALUE_HOLDING) {
             sum += x;
         }
-        average = (int) (sum / InMemoryStorage.VALUE_HOLDING.size());
+        average = sum / InMemoryStorage.VALUE_HOLDING.size();
         sum = 0;
         for (Long x : InMemoryStorage.VALUE_HOLDING) {
             sum += Math.pow((x - average), 2);
         }
-        return Math.sqrt(sum / InMemoryStorage.VALUE_HOLDING.size());
+        return Math.sqrt(sum / (InMemoryStorage.VALUE_HOLDING.size()-1));
     }
 }
