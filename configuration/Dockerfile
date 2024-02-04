@@ -9,7 +9,6 @@ EXPOSE 8888
 # The application's jar file
 ARG JAR_FILE=target/*.jar
 
-
 ADD ${JAR_FILE} configuration-server.jar
 
 # Run the jar file

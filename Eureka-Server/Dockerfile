@@ -1,5 +1,5 @@
 FROM openjdk:17-jdk-alpine
-# Add Maintainer Info
+# Add Maintainer Info.
 LABEL maintainer="EphremG"
 
 EXPOSE 8761
