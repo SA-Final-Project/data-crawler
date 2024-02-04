@@ -11,4 +11,4 @@ ARG JAR_FILE=target/*.jar
 ADD ${JAR_FILE} eureka-server.jar
 
 # Run the jar file
-ENTRYPOINT ["java","-jar","/eureka-server.jar"]
+ENTRYPOINT ["java","-jar","/eureka-server.jar", ""]
