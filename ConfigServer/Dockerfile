@@ -9,7 +9,7 @@ EXPOSE 8888
 # The application's jar file
 ARG JAR_FILE=target/*.jar
 
-ADD ${JAR_FILE} configuration-server.jar
+ADD ${JAR_FILE} config-server.jar
 
 # Run the jar file
-ENTRYPOINT ["java","-jar","/configuration-server.jar"]
+ENTRYPOINT ["java","-jar","/config-server.jar"]

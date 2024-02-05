@@ -12,4 +12,4 @@ ARG JAR_FILE=target/*.jar
 ADD ${JAR_FILE} RTDS-Service.jar
 
 # Run the jar file
-ENTRYPOINT ["java","-jar","/RTDS-Service.jar" ]
+ENTRYPOINT ["java","-jar","/RTDS-Service.jar", "https://swapi.dev/api/people" ]
