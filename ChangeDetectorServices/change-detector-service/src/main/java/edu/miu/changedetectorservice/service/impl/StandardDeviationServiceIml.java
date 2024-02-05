@@ -14,11 +14,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class StandardDeviationServiceIml implements StandardDeviationService {
 
-    @Value("${kafka.topics.cds.one}")
+    @Value("${kafka.topics.cd.output}")
     private String CHANGE_DETECTED_TOPIC;
-    @Value("${kafka.topics.cds.key}")
-    private String TOPIC_DATA_KEY_FOR_WINDOWED;
     private final KafkaTemplate<String, Integer> kafkaTemplate;
+
+    public void test(){
+        System.out.println(CHANGE_DETECTED_TOPIC);
+    }
 
     @Override
     public void findDataChange(Long x) {
@@ -39,7 +41,7 @@ public class StandardDeviationServiceIml implements StandardDeviationService {
             if (rate > 50) {
                 result = 1;
             }
-            kafkaTemplate.send(CHANGE_DETECTED_TOPIC, TOPIC_DATA_KEY_FOR_WINDOWED, result);
+            kafkaTemplate.send(CHANGE_DETECTED_TOPIC, result);
         } catch (Exception ex) {
             log.info("Error: ", ex);
         }
