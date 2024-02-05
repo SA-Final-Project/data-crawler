@@ -1,14 +1,14 @@
-FROM openjdk:17-jdk-alpine
-# Add Maintainer Info.
+FROM openjdk:17-jdk-alpine AS build
 LABEL maintainer="EphremG"
-
 EXPOSE 8761
+RUN apk add --no-cache maven
+WORKDIR /app
+COPY . /app
+RUN mvn package -DskipTests
 
-# The application's jar file
-ARG JAR_FILE=target/*.jar
-
-# Add the application's jar to the container
-ADD ${JAR_FILE} eureka-server.jar
-
-# Run the jar file
-ENTRYPOINT ["java","-jar","/eureka-server.jar", ""]
+FROM openjdk:17-jdk-alpine
+WORKDIR /app
+COPY --from=build /app/target/ /app/target/
+RUN mv /app/target/*.jar /app/target/eureka-server.jar
+EXPOSE 8761
+ENTRYPOINT ["java","-jar","/app/target/eureka-server.jar"]

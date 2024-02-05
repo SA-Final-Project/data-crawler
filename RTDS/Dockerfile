@@ -1,15 +1,16 @@
-FROM openjdk:17-jdk-alpine
-
-# Add Maintainer Info
+FROM openjdk:17-jdk-alpine AS build
 LABEL maintainer="EphremG"
+EXPOSE 8081
+RUN apk add --no-cache maven
+WORKDIR /app
+COPY . /app
+RUN mvn package -DskipTests
 
-# Make port 8888 available to the world outside this container
-EXPOSE 8888
-
-# The application's jar file
-ARG JAR_FILE=target/*.jar
-
-ADD ${JAR_FILE} RTDS-Service.jar
+FROM openjdk:17-jdk-alpine
+WORKDIR /app
+COPY --from=build /app/target/ /app/target/
+RUN mv /app/target/*.jar /app/target/rtds-server.jar
+EXPOSE 8081
 
 # Run the jar file
-ENTRYPOINT ["java","-jar","/RTDS-Service.jar", "https://swapi.dev/api/people" ]
+ENTRYPOINT ["java","-jar","/rtds-Service.jar", "https://swapi.dev/api/people" ]

@@ -1,15 +1,14 @@
-FROM openjdk:17-jdk-alpine
-
-# Add Maintainer Info
+FROM openjdk:17-jdk-alpine AS build
 LABEL maintainer="EphremG"
-
-# Make port 8888 available to the world outside this container
 EXPOSE 8888
+RUN apk add --no-cache maven
+WORKDIR /app
+COPY . /app
+RUN mvn package -DskipTests
 
-# The application's jar file
-ARG JAR_FILE=target/*.jar
-
-ADD ${JAR_FILE} config-server.jar
-
-# Run the jar file
-ENTRYPOINT ["java","-jar","/config-server.jar"]
+FROM openjdk:17-jdk-alpine
+WORKDIR /app
+COPY --from=build /app/target/ /app/target/
+RUN mv /app/target/*.jar /app/target/configuration-server.jar
+EXPOSE 8888
+ENTRYPOINT ["java","-jar","/app/target/configuration-server.jar"]
