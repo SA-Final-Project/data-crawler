@@ -2,6 +2,7 @@ package com.rtds.RTDS.web;
 
 import com.rtds.RTDS.domain.RTDIS;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,11 +12,15 @@ public class Controller {
     @Autowired
     RTDIS rtdis;
 
-    @GetMapping("/check")
-    public String check(){
-        //rtdis.sendMessage();
-        rtdis.startStreaming();
-        return "Okay";
+    @GetMapping()
+    public String message(){
+        return "No API URL provided. Please provide an API URL as a command line argument.";
+    }
 
+    @Value("${rtdis.message}")
+    private String welcomeMessage;
+    @GetMapping("/test")
+    public String test(){
+        return welcomeMessage;
     }
 }
