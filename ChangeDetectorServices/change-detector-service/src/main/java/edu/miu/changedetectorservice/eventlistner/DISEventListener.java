@@ -18,10 +18,11 @@ public class DISEventListener {
     private final StandardDeviationService service;
 
     @KafkaListener(topics = "${kafka.topics.dis.input}", groupId = "${spring.kafka.consumer.group-id}")
-    public void onDataSourceOne(@Payload Long message, @Headers MessageHeaders headers) {
+    public void onDataSourceOne(@Payload String message, @Headers MessageHeaders headers) {
+        System.out.println("Data Recieved: "+message);
         log.info("========> Data from data source one: {}", message);
         try {
-            service.findDataChange(message);
+            service.findDataChange(Long.parseLong(message));
         } catch (Exception ex) {
             log.info("========> Failed to convert message:", ex);
         }
