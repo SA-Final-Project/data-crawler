@@ -13,54 +13,78 @@ import java.util.regex.Pattern;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import static org.apache.commons.lang.StringUtils.substring;
+
 public class JSONNumberValueExtractor {
     private JSONNumberValueExtractor() {
 
     }
 
-    public static List<String[]> extractNumericValues(String jsonString) {
-        List<String[]> numericValues = new ArrayList<>();
-
-        Pattern pattern = Pattern.compile("\"(\\w+)\":\\s*([0-9]+(?:\\.[0-9]+)?)");
-        Matcher patternMatcher = pattern.matcher(jsonString);
-        while (patternMatcher.find()) {
-            numericValues.add(new String[] { patternMatcher.group(1), patternMatcher.group(2) });
-        }
-
-        // extractNumericValues(json);
-
-        // t
-        // ObjectMapper objectMapper = new ObjectMapper();
-        // JsonNode rootNode = objectMapper.readTree(jsonStri
-
-        // extractNumericValuesFromNode(rootNode, "", numericValu
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
-
-        return numericValues;
-
-    }
-
-    private static void extractNumericValuesFromNode(JsonNode node, String currentPath,
-            List<String[]> numericValues) {
-        Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
-        while (fields.hasNext()) {
-            Map.Entry<String, JsonNode> entry = fields.next();
-            String fieldName = entry.getKey();
-            JsonNode fieldValue = entry.getValue();
-            String fullPath = currentPath.isEmpty() ? fieldName : currentPath + "." + fieldName;
-
-            if (fieldValue.isNumber()) {
-                numericValues.add(new String[] { fullPath, fieldValue.toString() });
-            } else if (fieldValue.isObject()) {
-                extractNumericValuesFromNode(fieldValue, fullPath, numericValues);
-
-            } else if (fieldValue.isArray()) {
-                for (JsonNode field : fieldValue) {
-                    extractNumericValuesFromNode(field, fullPath, numericValues);
+    public static List<String[]>extractNumericValues(String input) {
+        Map<String, String> numeric = new HashMap<>();
+        String value="";
+        String key="";
+        char[] reverseKey ;
+        int initial=0;
+        List<String[]> numericKeyValue= new ArrayList<>();
+        String[] numberKey= new String[2];
+        String jsonString =input.replace(" ", "");
+        jsonString =jsonString.replace("\\", "");
+        char[] charJson =jsonString.toCharArray();
+        for(int i=2;i<charJson.length;i++){
+            if((charJson[i-1]==':'||  Character.isDigit(charJson[i-1])||(Character.isDigit(charJson[i-2]) && charJson[i-1]=='.')) && (Character.isDigit(charJson[i]) || charJson[i]=='.')){
+//                System.out.println(charJson[i]);
+                if(charJson[i-1]==':')
+//                if(charJson[i]=='{'){
+//                    for(int p=i-3;i>0;i-- ){
+//                        if(charJson[i]=='"'){
+//                            break;
+//                        }
+//                        tempPath+=charJson[i];
+//                    }
+//                    path=path+"."+tempPath;
+//                }
+//                System.out.println(path);
+//
+//                if(charJson[i]=='}'){
+//
+//                    for(int p=i-2;i>0;i-- ){
+//                        if(charJson[i]=='"'){
+//                            break;
+//                        }
+//                        tempPath=tempPath.substring(charJson.length-1);
+//                    }
+//                    path=path.substring("."+tempPath);
+//                }
+                {initial = i-3;}
+                value+=charJson[i];
+                if(Character.isDigit(charJson[i]) && (charJson[i+1]==',')||charJson[i+1]=='}'){
+                    for (int j=initial;j>0;j--){
+                        if(charJson[j]=='"'){
+                            break;
+                        }
+                        key+=charJson[j];
+                    }
+                    reverseKey= key.toCharArray();
+                    char temp;
+                    for(int k=0;k<reverseKey.length/2;k++){
+                        temp=reverseKey[k];
+                        reverseKey[k]=reverseKey[reverseKey.length-1-k];
+                        reverseKey[reverseKey.length-1-k]=temp;
+                    }
+                    ;
+                    numeric.put(new String(reverseKey),value);
+                    numberKey[0]=new String(reverseKey);
+                    numberKey[1]=value;
+                    numericKeyValue.add(numberKey);
+                    value="";
+                    initial=0;
+                    key="";
                 }
             }
         }
+//        return numeric;
+        return numericKeyValue;
     }
 }
+
