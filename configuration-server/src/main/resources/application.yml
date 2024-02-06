@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    active: git
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: "https://gitlab.com/miu-swa/configserver.git"
+          default-label: main
+          timeout: 5
+          clone-on-start: true
+          force-pull: true
+server:
+  port: 7000
