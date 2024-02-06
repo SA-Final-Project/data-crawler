@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { useState, useEffect } from "react";
+import ReactTimeago from "react-timeago";
 
 function App() {
   const { sendMessage, lastMessage, readyState } = useWebSocket(
@@ -46,7 +47,8 @@ function App() {
 
   useEffect(() => {
     if (lastMessage !== null) {
-      setMessageHistory((prev) => prev.concat(JSON.parse(lastMessage.data)));
+      setMessageHistory((prev) => [JSON.parse(lastMessage.data), ...prev]);
+      console.log(messageHistory)
     }
   }, [lastMessage, setMessageHistory]);
 
@@ -97,19 +99,29 @@ function App() {
                 {messageHistory.map((msg, i) => (
                   <>
                     <ListItem alignItems="flex-start">
-                      <ListItemText
-                        primary={msg ? msg.msg : null}
-                        secondary={msg ? msg.topic : null}
-                      />
+                      <ListItemText>
+                        <Typography variant="body">
+                          {msg.msg && msg.msg}
+                        </Typography>
+                        <br />
+                        <Typography variant="caption">
+                          {msg.topic && msg.topic} &bull;{" "}
+                          <ReactTimeago date={msg.ts} />{" "}
+                        </Typography>
+                      </ListItemText>
                     </ListItem>
                     <Divider component="li" />
                   </>
                 ))}
 
-                <ListItem alignItems="flex-start">
-                  <ListItemText primary="main" secondary="secondary" />
-                </ListItem>
-                <Divider component="li" />
+                {messageHistory.length === 0 ? (
+                  <>
+                    <ListItem alignItems="flex-start">
+                      <ListItemText primary="Nothing to show here" secondary="Send some messages to see them here" />
+                    </ListItem>
+                    <Divider component="li" />
+                  </>
+                ) : null}
               </List>
             </Grid>
           </Grid>

@@ -4,6 +4,10 @@ spring:
     main:
         allow-bean-definition-overriding: true
 
+server:
+    port: 8080
+    host: localhost
+
 kafka:
     bootstrap-servers: localhost:9092
     consumer:
