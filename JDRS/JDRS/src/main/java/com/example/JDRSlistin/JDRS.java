@@ -15,16 +15,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class JDRS {
@@ -49,16 +54,23 @@ public class JDRS {
     private KafkaTemplate<String, String> kafkaTemplate;
 
     @KafkaListener(topicPattern = "RTD_.*", groupId = "gid")
-    public void processJsonMessage(ConsumerRecord<String, String> record) {
-        String json = record.value();
+    public void processJsonMessage(@Payload String json, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
 
-        try {
-            List<String[]> numberValues = JSONNumberValueExtractor.extractNumericValues(json);
-            numberValues
-                    .forEach(values -> publishDataElement(record.topic().split("_")[1] + "_" + values[0], values[1]));
-        } catch (Exception e) {
-            logger.error("Error processing JSON: " + e.getMessage());
+        List<String[]> numberValues = new ArrayList<>();
+
+        System.out.println("Got JSON from topic " + topic + " " + json);
+
+        Pattern pattern = Pattern.compile("\"(\\w+)\":\\s*([0-9]+(?:\\.[0-9]+)?)");
+        Matcher patternMatcher = pattern.matcher(json);
+        while (patternMatcher.find()) {
+            numberValues.add(new String[] { patternMatcher.group(1), patternMatcher.group(2) });
         }
+
+        numberValues
+                .forEach(values -> publishDataElement(topic.split("_")[1] + "_" +
+                        values[0], values[1]));
+
+        System.out.println(numberValues);
     }
 
     private void publishDataElement(String name, String value) {
@@ -67,10 +79,13 @@ public class JDRS {
         adminClient.listTopics().names().thenApply(
                 topics -> topics.stream().filter(topic::equals).findFirst()
                         .orElseGet(() -> {
+                            System.out.println("New Topic found");
                             kafkaTemplate.send("newRTDI", topic);
                             return null;
                         }));
 
-        kafkaTemplate.send(topic, name, value);
+        System.out.println("Sending data " + value + " on topic " + topic);
+
+        kafkaTemplate.send(topic, value);
     }
 }
