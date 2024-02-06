@@ -17,12 +17,12 @@ public class RtdsApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		//default url set if no command line argument is passed
-		String api = "localhost:8081";
+		// default url set if no command line argument is passed
+		String api = "https://swapi.dev/api/people";
 
 		for (String arg : args) {
 			System.out.println("api: " + arg);
-			api=arg;
+			api = arg;
 		}
 
 		rtdis.startStreaming(api);
