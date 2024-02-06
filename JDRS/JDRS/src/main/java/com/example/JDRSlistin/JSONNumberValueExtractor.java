@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,16 +21,25 @@ public class JSONNumberValueExtractor {
     public static List<String[]> extractNumericValues(String jsonString) {
         List<String[]> numericValues = new ArrayList<>();
 
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(jsonString);
-
-            extractNumericValuesFromNode(rootNode, "", numericValues);
-        } catch (IOException e) {
-            e.printStackTrace();
+        Pattern pattern = Pattern.compile("\"(\\w+)\":\\s*([0-9]+(?:\\.[0-9]+)?)");
+        Matcher patternMatcher = pattern.matcher(jsonString);
+        while (patternMatcher.find()) {
+            numericValues.add(new String[] { patternMatcher.group(1), patternMatcher.group(2) });
         }
 
+        // extractNumericValues(json);
+
+        // t
+        // ObjectMapper objectMapper = new ObjectMapper();
+        // JsonNode rootNode = objectMapper.readTree(jsonStri
+
+        // extractNumericValuesFromNode(rootNode, "", numericValu
+        // } catch (IOException e) {
+        // e.printStackTrace();
+        // }
+
         return numericValues;
+
     }
 
     private static void extractNumericValuesFromNode(JsonNode node, String currentPath,
