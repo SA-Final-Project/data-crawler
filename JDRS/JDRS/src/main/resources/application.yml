@@ -1,10 +1,10 @@
 spring:
   application:
-    name: JDRS
+    name: jdrs
   config:
-    import: optional:configserver:http://localhost:8888
-  zipkin:
-    base-url: http://localhost:9411/
+    import:
+      - configserver:http://localhost:7000
+
 
 server:
   port: 8082
@@ -13,16 +13,5 @@ logging:
   level:
     root: ERROR
 
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
-
-
-
-sleuth:
-  sampler:
-    probability: 1 #100% (default = 10%)
 
 
