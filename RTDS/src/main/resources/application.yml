@@ -1,9 +1,9 @@
 spring:
   application:
-    name: RTDS
+    name: rtdis
   config:
     import:
-      - optional:configserver:http://localhost:8888
+      - configserver:http://localhost:7000
 
 server:
   port: 8081

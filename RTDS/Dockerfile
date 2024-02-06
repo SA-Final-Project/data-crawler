@@ -13,4 +13,4 @@ RUN mv /app/target/*.jar /app/target/rtds-server.jar
 EXPOSE 8081
 
 # Run the jar file
-ENTRYPOINT ["java","-jar","/rtds-Service.jar", "https://swapi.dev/api/people" ]
+ENTRYPOINT ["java","-jar","/app/target/rtds-server.jar","https://swapi.dev/api/people"]
