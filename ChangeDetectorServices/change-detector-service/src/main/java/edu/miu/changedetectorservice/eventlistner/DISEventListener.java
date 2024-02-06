@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class DISEventListener {
     private final StandardDeviationService service;
 
-    @KafkaListener(topics = "${kafka.topics.dis.input}")
+    @KafkaListener(topics = "${kafka.topics.dis.input}", groupId = "${spring.kafka.consumer.group-id}")
     public void onDataSourceOne(@Payload Long message, @Headers MessageHeaders headers) {
         log.info("========> Data from data source one: {}", message);
         try {
