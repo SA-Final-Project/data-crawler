@@ -29,7 +29,7 @@ import java.util.Properties;
 @Component
 public class JDRS {
 
-    @Value("${kafka.bootstrap-servers}")
+    @Value("${spring.kafka.bootstrap-servers}")
     String bootstrapServers;
 
     AdminClient adminClient;
