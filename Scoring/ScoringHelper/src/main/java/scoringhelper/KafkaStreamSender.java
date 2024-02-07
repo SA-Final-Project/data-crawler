@@ -26,11 +26,11 @@ public class KafkaStreamSender {
 
     //@KafkaListener(topics = "#{'${si-topics}'.split(',')}")
     // ***************************************************************************You NEED TO CHANGE THIS before pushing github
-    @KafkaListener(topicPattern = "SI_.*")
-    public void receiveSI(@Payload Integer si){
+    @KafkaListener(topicPattern = "SI_.*", groupId = "${spring.kafka.consumer.group-id}")
+    public void receiveSI(@Payload String si){
         System.out.println("Received - SensitivityIndex: "+ si);
 
-        int sIndex = si;
+        int sIndex = Integer.parseInt(si);
 
         if (sIndex < lowerBound)
             lowerBound = sIndex;

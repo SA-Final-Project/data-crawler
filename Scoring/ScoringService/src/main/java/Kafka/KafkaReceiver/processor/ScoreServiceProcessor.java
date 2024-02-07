@@ -20,14 +20,13 @@ import java.util.Arrays;
 public class ScoreServiceProcessor {
     @Value("${kafka.topics.cds.one}")
     private String inputX;
-    @Value("${" +
-            "}")
+    @Value("${kafka.topics.cds.two}")
     private String inputY;
     @Autowired
     NsiProducer nsiProducer;
     @Autowired
     SiProducer siProducer;
-//    @Value("${spring.kafka.window-size}")
+    //@Value("${spring.kafka.window-size}")
     private int dynamicWindowSize = 5;
 
     private final Duration windowSize = Duration.ofSeconds(dynamicWindowSize); //create a window size duration
@@ -85,7 +84,7 @@ public class ScoreServiceProcessor {
 
     }
 
-    @KafkaListener(topics = "${kafka.topics.scoring.lu-bound}", groupId = "bound")
+    @KafkaListener(topics = "${kafka.topics.scoring.lu-bound}", groupId = "${spring.kafka.consumer.group-id}")
     public void boundListener(@Payload String bounds){
         String[] boundValues = bounds.split(",");
         int lowerBound = Integer.parseInt(boundValues[0]);

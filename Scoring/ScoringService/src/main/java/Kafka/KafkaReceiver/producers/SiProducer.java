@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 public class SiProducer {
     @Autowired
     KafkaTemplate<String, Integer> kafkaTemplate;
-    @Value("${kafka.topics.scoring.si.one}")
-    private String siTopic;
+//    @Value("${kafka.topics.scoring.si.one}")
+    private static String siTopic= "SI_Topic";
     public void publishSensitivityIndex(String key, int value){
         System.out.println("Published - ");
         System.out.println("\tSensitivityIndex: "+ value + " to Topic: "+ siTopic);

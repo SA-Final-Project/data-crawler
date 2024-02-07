@@ -12,8 +12,8 @@ public class NsiProducer {
     @Autowired
     KafkaTemplate<String, Double> kafkaTemplate;
 
-    @Value("${kafka.topics.scoring.nsi.one}")
-    private String nsiTopic;
+//    @Value("${kafka.topics.scoring.nsi.one}")
+    private static String nsiTopic = "SI_iTopic";
 
     public void publishNormalizedSensitivityIndex(Double value){
         System.out.println("Published - ");
