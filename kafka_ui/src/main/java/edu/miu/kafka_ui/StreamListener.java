@@ -31,6 +31,7 @@ public class StreamListener {
 
     public void sendMsg(String topic, String msg) {
         kafkaTemplate.send(topic, msg);
+        kafkaTemplate.flush();
     }
 
 }

@@ -65,9 +65,7 @@ public class ScoringService {
 //                });
 //    }
 
-//    @KafkaListener(topics = {"${kafka.topics.cds.one}", "${kafka.topics.cds.two}"}, groupId = "${spring.kafka.consumer.group-id}")
-    @KafkaListener(topics = "${kafka.topics.cds.one}", groupId = "gid")
-
+    @KafkaListener(topics = {"${kafka.topics.cds.one}", "${kafka.topics.cds.two}"}, groupId = "${spring.kafka.consumer.group-id}")
     public void getDataFroInputX(@Payload String value, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic){
         System.out.println(value + " " + topic);
 
