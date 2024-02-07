@@ -34,9 +34,8 @@ public class StreamListener {
         addToBuffer(topicBuffer, Integer.parseInt(message));
 
         float val = computeNormalizedValue(topicBuffer.size() - 1, message);
-        System.out.println(val);
 
-        System.out.println(buffer);
+        System.out.println("Got data " + message + " from " + topic + ",  sending normalized data " + val);
 
         kafkaTemplate.send(TOPIC_PREFIX + topic.substring(3),
                 String.valueOf(val));
@@ -56,8 +55,6 @@ public class StreamListener {
 
         int min = valuesToBeNormalized.stream().mapToInt(i -> i).min().orElse(0);
         int max = valuesToBeNormalized.stream().mapToInt(i -> i).max().orElse(0);
-
-        System.out.println(max + " " + min);
 
         if ((min - max) == 0) {
             return Integer.parseInt(msg);
