@@ -54,35 +54,77 @@ public class JDRS {
     private KafkaTemplate<String, String> kafkaTemplate;
 
     @KafkaListener(topicPattern = "RTD_.*", groupId = "gid")
-    public void processJsonMessage(@Payload String json, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+    public void processJsonMessage(@Payload String json, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) throws Exception {
 
         List<String[]> numberValues = new ArrayList<>();
-
+        numberValues= JDRS.extractNumericValues(json);
         System.out.println("Got JSON from topic " + topic + " " + json);
 
-        Pattern pattern = Pattern.compile("\"(\\w+)\":\\s*([0-9]+(?:\\.[0-9]+)?)");
-        Matcher patternMatcher = pattern.matcher(json);
-        while (patternMatcher.find()) {
-            numberValues.add(new String[] { patternMatcher.group(1), patternMatcher.group(2) });
-        }
 
         numberValues
-                .forEach(values -> publishDataElement(topic.split("_")[1] + "_" +
-                        values[0], values[1]));
+                .forEach(values -> {
+                    try {
+                        publishDataElement(topic.split("_")[1] + "-" +
+                                values[0], values[1]);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
 
-        System.out.println(numberValues);
+//        System.out.println(numberValues);
+
     }
+        public static List<String[]> extractNumericValues(String jsonString) {
+            List<String[]> numericValues = new ArrayList<>();
 
-    private void publishDataElement(String name, String value) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                JsonNode rootNode = objectMapper.readTree(jsonString);
+
+                extractNumericValuesFromNode(rootNode, "", numericValues);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return numericValues;
+        }
+
+        private static void extractNumericValuesFromNode(JsonNode node, String currentPath,
+                List<String[]> numericValues) {
+            Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
+            while (fields.hasNext()) {
+                Map.Entry<String, JsonNode> entry = fields.next();
+                String fieldName = entry.getKey();
+                JsonNode fieldValue = entry.getValue();
+                String fullPath = currentPath.isEmpty() ? fieldName : currentPath + "." + fieldName;
+
+                if (fieldValue.isNumber()) {
+                    numericValues.add(new String[] { fullPath, fieldValue.toString() });
+                } else if (fieldValue.isObject()) {
+                    extractNumericValuesFromNode(fieldValue, fullPath, numericValues);
+
+                } else if (fieldValue.isArray()) {
+                    for (JsonNode field : fieldValue) {
+                        extractNumericValuesFromNode(field, fullPath, numericValues);
+                    }
+                }
+            }
+        }
+
+
+    private void publishDataElement(String name, String value) throws Exception {
         String topic = OUTPUT_TOPIC_PREFIX + name;
 
         adminClient.listTopics().names().thenApply(
                 topics -> topics.stream().filter(topic::equals).findFirst()
                         .orElseGet(() -> {
                             System.out.println("New Topic found");
+                            System.out.println("======================================================================");
                             kafkaTemplate.send("newRTDI", topic);
                             return null;
                         }));
+
+//        System.out.println((adminClient.listTopics().names().get()));
 
         System.out.println("Sending data " + value + " on topic " + topic);
 

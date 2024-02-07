@@ -49,7 +49,7 @@ public class RTDIS {
                 .bodyToMono(String.class)
                 .subscribe(data -> {
                     // Print received message
-                    System.out.println("Received msg: " + data);
+                   System.out.println("Received msg: " + data);
                     // Send the received message to Kafka
                     kafkaProducer.send(KAFKA_TOPIC, data);
                     // Print confirmation message
