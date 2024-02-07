@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 public class StreamListener {
     Map<String, List<Integer>> buffer = new HashMap<>();
 
+    private static final int MAX_BUFFER_SIZE = 200;
+
     static final String TOPIC_PREFIX = "SS_";
 
     @Autowired
@@ -29,12 +31,15 @@ public class StreamListener {
 
         List<Integer> topicBuffer = buffer.computeIfAbsent(topic, t -> new ArrayList<>());
 
-        topicBuffer.add(Integer.parseInt(message));
+        addToBuffer(topicBuffer, Integer.parseInt(message));
 
-        System.out.println(message + " " + topic);
+        float val = computeNormalizedValue(topicBuffer.size() - 1, message);
+        System.out.println(val);
+
+        System.out.println(buffer);
 
         kafkaTemplate.send(TOPIC_PREFIX + topic.substring(3),
-                String.valueOf(computeNormalizedValue(topicBuffer.size(), topic)));
+                String.valueOf(val));
     }
 
     public float computeNormalizedValue(int index, String msg) {
@@ -49,10 +54,23 @@ public class StreamListener {
             }
         });
 
-        int max = valuesToBeNormalized.stream().mapToInt(i -> i).max().orElse(0);
         int min = valuesToBeNormalized.stream().mapToInt(i -> i).min().orElse(0);
+        int max = valuesToBeNormalized.stream().mapToInt(i -> i).max().orElse(0);
 
-        return (float) (Integer.parseInt(msg) - min) / (max - min);
+        System.out.println(max + " " + min);
+
+        if ((min - max) == 0) {
+            return Integer.parseInt(msg);
+        }
+
+        return (Float.parseFloat(msg) - min) / (max - min);
     }
 
+    public void addToBuffer(List<Integer> topicBuffer, int value) {
+        if (topicBuffer.size() > MAX_BUFFER_SIZE) {
+            topicBuffer.remove(0);
+        }
+
+        topicBuffer.add(value);
+    }
 }
