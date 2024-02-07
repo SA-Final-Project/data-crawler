@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController("/api")
 public class APIController {
 
-    @GetMapping("/")
-    public ResponseEntity<?> getAPIData() {
-        // return new SomeData();
-    }
+    // @GetMapping("/")
+    // public ResponseEntity<?> getAPIData() {
+    // // return new SomeData();
+    // }
 
 }

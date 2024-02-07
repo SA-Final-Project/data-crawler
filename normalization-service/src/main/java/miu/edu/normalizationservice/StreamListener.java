@@ -31,6 +31,8 @@ public class StreamListener {
 
         topicBuffer.add(Integer.parseInt(message));
 
+        System.out.println(message + " " + topic);
+
         kafkaTemplate.send(TOPIC_PREFIX + topic.substring(3),
                 String.valueOf(computeNormalizedValue(topicBuffer.size(), topic)));
     }

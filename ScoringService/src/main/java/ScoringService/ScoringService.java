@@ -21,7 +21,7 @@ public class ScoringService {
     @Value("${kafka.topics.cds.two}")
     private String inputY;
 
-    private static final String SS_PREFIX = "SS_";
+    private static final String TOPIC_PREFIX = "SI_";
     private int dynamicWindowSize = 5;
     private final Duration windowSize = Duration.ofSeconds(dynamicWindowSize); // create a window size duration
 
@@ -45,13 +45,13 @@ public class ScoringService {
         System.out.println(XORValue);
 
         System.out.println(
-                "Publishing value " + XORValue + " to topic " + SS_PREFIX + inputX.split("_")[1] + "_"
+                "Publishing value " + XORValue + " to topic " + TOPIC_PREFIX + inputX.split("_")[1] + "_"
                         + inputY.split("_")[1]);
 
         publishScore(XORValue, api_name);
     }
 
     public void publishScore(Integer score, String api_name) {
-        scoreKafka.send(SS_PREFIX + inputX.split("_")[1] + "_" + inputY.split("_")[1], score.toString());
+        scoreKafka.send(TOPIC_PREFIX + inputX.split("_")[1] + "_" + inputY.split("_")[1], score.toString());
     }
 }

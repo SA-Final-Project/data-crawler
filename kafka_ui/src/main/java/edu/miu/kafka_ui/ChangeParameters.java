@@ -27,7 +27,7 @@ public class ChangeParameters implements Runnable {
     private void populateStartingPoint() {
         Random rand = new Random();
         for (int i = 0; i < numberOfDataPoints; i++) {
-            startingPoints.add(rand.nextFloat(i, i));
+            startingPoints.add(rand.nextFloat());
         }
     }
 
