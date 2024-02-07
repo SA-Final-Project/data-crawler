@@ -22,7 +22,7 @@ public class DISEventListener {
         System.out.println("Data Recieved: "+message);
         log.info("========> Data from data source one: {}", message);
         try {
-            service.findDataChange(Long.parseLong(message));
+            service.findDataChange(Double.parseDouble(message));;
         } catch (Exception ex) {
             log.info("========> Failed to convert message:", ex);
         }

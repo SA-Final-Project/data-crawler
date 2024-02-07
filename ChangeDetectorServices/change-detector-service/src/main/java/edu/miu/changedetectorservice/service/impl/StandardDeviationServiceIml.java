@@ -24,7 +24,7 @@ public class StandardDeviationServiceIml implements StandardDeviationService {
     }
 
     @Override
-    public void findDataChange(Long x) {
+    public void findDataChange(Double x) {
         if (InMemoryStorage.VALUE_HOLDING.size() < 20) {
             InMemoryStorage.VALUE_HOLDING.add(x);
         } else {
@@ -57,12 +57,12 @@ public class StandardDeviationServiceIml implements StandardDeviationService {
     private Double calculateStandardDeviation() {
         Integer average;
         double sum = 0;
-        for (Long x : InMemoryStorage.VALUE_HOLDING) {
+        for (Double x : InMemoryStorage.VALUE_HOLDING) {
             sum += x;
         }
         average = (int) (sum / InMemoryStorage.VALUE_HOLDING.size());
         sum = 0;
-        for (Long x : InMemoryStorage.VALUE_HOLDING) {
+        for (Double x : InMemoryStorage.VALUE_HOLDING) {
             sum += Math.pow((x - average), 2);
         }
         return Math.sqrt(sum / InMemoryStorage.VALUE_HOLDING.size());

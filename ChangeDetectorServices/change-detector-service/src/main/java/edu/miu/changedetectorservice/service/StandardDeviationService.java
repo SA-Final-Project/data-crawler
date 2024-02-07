@@ -4,6 +4,6 @@ import org.springframework.stereotype.Service;
 
 public interface StandardDeviationService {
 
-    void findDataChange(Long x);
+    void findDataChange(Double x);
 }
 
