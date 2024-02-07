@@ -33,5 +33,4 @@ public class SSTracker {
         windowedTopic2.add(value);
     }
 
-
 }
