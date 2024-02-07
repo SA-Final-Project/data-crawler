@@ -7,14 +7,9 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class SSApplication implements CommandLineRunner {
+public class SSApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SSApplication.class, args);
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        System.out.println("${kafka.topics.cds.one}");
     }
 }

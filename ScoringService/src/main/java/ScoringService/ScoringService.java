@@ -23,10 +23,11 @@ public class ScoringService {
 
     private static final String SS_PREFIX = "SS_";
     private int dynamicWindowSize = 5;
-    private final Duration windowSize = Duration.ofSeconds(dynamicWindowSize); //create a window size duration
+    private final Duration windowSize = Duration.ofSeconds(dynamicWindowSize); // create a window size duration
 
-    @KafkaListener(topics = {"${kafka.topics.cds.one}", "${kafka.topics.cds.two}"}, groupId = "${spring.kafka.consumer.group-id}")
-    public void getDataFroInputX(@Payload String value, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic){
+    @KafkaListener(topics = { "${kafka.topics.cds.one}",
+            "${kafka.topics.cds.two}" }, groupId = "${spring.kafka.consumer.group-id}")
+    public void getDataFroInputX(@Payload String value, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         System.out.println(value + " " + topic);
 
         if (Objects.equals(topic, inputX))
@@ -36,18 +37,21 @@ public class ScoringService {
 
         String api_name = topic.split("_")[1];
 
-        System.out.println(api_name);
+        System.out.println("Got data " + value + " from topic " + topic + " from API " + api_name);
 
-        int XORValue = SSHelper.getXORValue(SSTracker.getIntstance().windowedTopic1, SSTracker.getIntstance().windowedTopic2);
+        int XORValue = SSHelper.getXORValue(SSTracker.getIntstance().windowedTopic1,
+                SSTracker.getIntstance().windowedTopic2);
 
         System.out.println(XORValue);
 
-        System.out.println(SS_PREFIX + inputX.split("_")[1] + "_" + inputY.split("_")[1]);
+        System.out.println(
+                "Publishing value " + XORValue + " to topic " + SS_PREFIX + inputX.split("_")[1] + "_"
+                        + inputY.split("_")[1]);
 
         publishScore(XORValue, api_name);
     }
-    
-    public void publishScore(Integer score, String api_name){
+
+    public void publishScore(Integer score, String api_name) {
         scoreKafka.send(SS_PREFIX + inputX.split("_")[1] + "_" + inputY.split("_")[1], score.toString());
     }
 }
