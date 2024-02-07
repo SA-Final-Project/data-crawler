@@ -10,7 +10,7 @@ public class APIController {
 
     @GetMapping("/")
     public ResponseEntity<?> getAPIData() {
-        return new SomeData();
+        // return new SomeData();
     }
 
 }
