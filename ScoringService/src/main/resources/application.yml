@@ -1,0 +1,10 @@
+
+spring:
+  application:
+    name: ss
+  config:
+    import:
+      - configserver:http://localhost:7000
+server:
+  port: 4444
+
