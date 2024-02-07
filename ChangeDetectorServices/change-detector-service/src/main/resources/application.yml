@@ -1,0 +1,10 @@
+server:
+  port: 8381
+
+spring:
+  config:
+    import: configserver:http://localhost:7000
+
+  application:
+    name: cds
+

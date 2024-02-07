@@ -14,15 +14,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class StandardDeviationServiceIml implements StandardDeviationService {
 
-    @Value("${kafka.topics.cds.one}")
-    private String CHANGE_DETECTED_TOPIC;
-    @Value("${kafka.topics.cds.key}")
-    private String TOPIC_DATA_KEY_FOR_WINDOWED;
-    private final KafkaTemplate<String, Integer> kafkaTemplate;
+
+    @Value("${kafka.topics.dis.input}")
+    private String INPUT_TOPIC;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    public void test(){
+        System.out.println(INPUT_TOPIC);
+    }
 
     @Override
-    public void findDataChange(Long x) {
-
+    public void findDataChange(Double x) {
         if (InMemoryStorage.VALUE_HOLDING.size() < 20) {
             InMemoryStorage.VALUE_HOLDING.add(x);
         } else {
@@ -33,19 +35,20 @@ public class StandardDeviationServiceIml implements StandardDeviationService {
         double sd = calculateStandardDeviation();
         double rate = calculateDataChangeRate(sd);
         InMemoryStorage.PREVIOUS_SD = sd;
-        int result = 0;
+        Integer result = 0;
         try {
             // rate matrix in percentage
             if (rate > 50) {
                 result = 1;
             }
-            kafkaTemplate.send(CHANGE_DETECTED_TOPIC, TOPIC_DATA_KEY_FOR_WINDOWED, result);
+            String CHANGE_DETECTED_TOPIC = INPUT_TOPIC.replace("RTDI", "CD");
+            kafkaTemplate.send(CHANGE_DETECTED_TOPIC, result.toString());
+            System.out.println(CHANGE_DETECTED_TOPIC +" " +result);
         } catch (Exception ex) {
             log.info("Error: ", ex);
         }
         log.info("=====> data change result: {}", result);
     }
-
     private Double calculateDataChangeRate(double sd) {
         double diff = Math.abs(sd - InMemoryStorage.PREVIOUS_SD);
         return (diff / InMemoryStorage.PREVIOUS_SD) * 100;
@@ -54,12 +57,12 @@ public class StandardDeviationServiceIml implements StandardDeviationService {
     private Double calculateStandardDeviation() {
         Integer average;
         double sum = 0;
-        for (Long x : InMemoryStorage.VALUE_HOLDING) {
+        for (Double x : InMemoryStorage.VALUE_HOLDING) {
             sum += x;
         }
         average = (int) (sum / InMemoryStorage.VALUE_HOLDING.size());
         sum = 0;
-        for (Long x : InMemoryStorage.VALUE_HOLDING) {
+        for (Double x : InMemoryStorage.VALUE_HOLDING) {
             sum += Math.pow((x - average), 2);
         }
         return Math.sqrt(sum / InMemoryStorage.VALUE_HOLDING.size());

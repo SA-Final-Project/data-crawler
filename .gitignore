@@ -4,9 +4,11 @@ target/
 !**/src/main/**/target/
 
 
+
 node_modules
 
 .mvn
+
 ### STS ###
 .apt_generated
 .classpath

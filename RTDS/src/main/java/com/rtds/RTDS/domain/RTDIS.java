@@ -1,6 +1,5 @@
 package com.rtds.RTDS.domain;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,22 +17,22 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RTDIS {
 
-//    @Value("${api_url}")
-//    private  String API_URL;
-    private  String API_URL;
-    
-//    @Value("${topic_name}")
-//    private  String KAFKA_TOPIC;
+    // @Value("${api_url}")
+    // private String API_URL;
+    private String API_URL = "swapi.dev/api/vehicles/";
+
+    // @Value("${topic_name}")
+    // private String KAFKA_TOPIC;
     private String KAFKA_TOPIC;
 
     @Autowired
-    private KafkaTemplate<String,String> kafkaProducer;
+    private KafkaTemplate<String, String> kafkaProducer;
     private ScheduledExecutorService scheduler;
 
     // Start streaming process
     public void startStreaming(String api) {
         API_URL = api;
-        KAFKA_TOPIC = "RTD_"+extractApiName(API_URL);
+        KAFKA_TOPIC = "RTD_" + extractApiName(API_URL);
         System.out.println(KAFKA_TOPIC);
         scheduler = Executors.newSingleThreadScheduledExecutor();
         // Schedule the stream method to run every 10 seconds
@@ -59,9 +58,9 @@ public class RTDIS {
     }
 
     public static String extractApiName(String urlString) {
-try {
+        try {
             URL url = new URL(urlString);
-    return url.getHost();
+            return url.getHost();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
