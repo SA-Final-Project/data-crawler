@@ -4,30 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import lombok.Data;
+
+@Data
 public class ChangeParameters implements Runnable {
     int windowSize = 20;
     int spikeRate = 10;
-    int dataLowerBound = -5;
-    int dataUpperBound = 5;
+    int dataLowerBound = -10;
+    int dataUpperBound = 10;
     int numberOfDataPoints = 8;
 
-    List<Float> startingPoints = new ArrayList<>();
+    List<Integer> startingPoints = new ArrayList<>();
 
-    long ticker = 0;
+    long ticker = 1;
     private static final long TICKER_SLEEP_TIME = 1000;
 
     public static final ChangeParameters instance = new ChangeParameters();
 
     private ChangeParameters() {
         this.populateStartingPoint();
-
-        new Thread(instance).start();
     }
 
     private void populateStartingPoint() {
         Random rand = new Random();
         for (int i = 0; i < numberOfDataPoints; i++) {
-            startingPoints.add(rand.nextFloat());
+            startingPoints.add(rand.nextInt());
         }
     }
 
@@ -35,10 +36,12 @@ public class ChangeParameters implements Runnable {
     public void run() {
         try {
             while (true) {
+                System.out.println("Ticker updated =======================================================");
                 ticker += 1;
                 Thread.sleep(TICKER_SLEEP_TIME);
             }
         } catch (InterruptedException e) {
+            System.out.println("---------------------------------------------------------------");
             e.printStackTrace();
         }
     }
@@ -85,11 +88,11 @@ public class ChangeParameters implements Runnable {
         this.populateStartingPoint();
     }
 
-    public List<Float> getStartingPoints() {
+    public List<Integer> getStartingPoints() {
         return this.startingPoints;
     }
 
-    public void setStartingPoints(List<Float> startingPoints) {
+    public void setStartingPoints(List<Integer> startingPoints) {
         this.startingPoints = startingPoints;
     }
 

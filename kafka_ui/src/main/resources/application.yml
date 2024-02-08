@@ -6,10 +6,9 @@ spring:
 
 server:
     port: 8080
-    host: localhost
 
 kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: 157.230.200.212:9092
     consumer:
         group-id: gid
         auto-offset-reset: earliest

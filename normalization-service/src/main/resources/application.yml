@@ -1,16 +1,18 @@
-
 spring:
     application:
-        name: NS
-    main:
-        allow-bean-definition-overriding: true
+        name: ns-prod
+    # main:
+    #     allow-bean-definition-overriding: true
+    # config:
+    #     import:
+    #     - configserver:http://localhost:7000
 
 server:
     port: 3333
     host: localhost
 
 kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: 157.230.200.212:9092
     consumer:
         group-id: gid
         auto-offset-reset: earliest

@@ -19,6 +19,7 @@ public class DataSource {
         jsonSample.put("madeIn", "America");
         jsonSample.put("date", "2/7/2024");
 
+        System.out.println(params);
     }
 
     Map<String, Object> generateData() {
@@ -36,6 +37,7 @@ public class DataSource {
             data.put("dataPoint" + i, rand.nextInt(params.getDataLowerBound(), params.getDataUpperBound()) * spike);
         }
 
+        jsonSample.put("data", data);
         return jsonSample;
     }
 
